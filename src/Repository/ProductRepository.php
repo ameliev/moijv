@@ -12,6 +12,27 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
+    
+    public function findAllWithTags(){
+        return $this->createQueryBuilder('p')
+                ->leftJoin('p.tags', 't')
+                ->addSelect('t')
+                ->getQuery()
+                ->getResult();
+    }
+    
+    public function findByTagWithTags($tag){
+        //SELECT p.*, t.* FROM product p LEFT JOIN product_tag ON product_tag.product_id
+        //= product.id LEFT JOIN tag t ON tag.id = product_tag.tag_id
+        //WHERE tag.id="qqch"
+        return $this->createQueryBuilder('p')
+                 ->leftJoin('p.tags', 't')
+                ->addSelect('t')
+                ->where('t.id = :id')
+                ->setParameter(':id', $tag->getId())
+                 ->getQuery()
+                ->getResult();
+    }
 
     /*
     public function findBySomething($value)
